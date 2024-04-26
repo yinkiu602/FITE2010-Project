@@ -1,0 +1,76 @@
+{
+	"compiler": {
+		"version": "0.8.22+commit.4fc1097e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "projectOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "name",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_projectTime",
+						"type": "uint256"
+					}
+				],
+				"name": "init",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"Pool.sol": "projectInterface"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts/proxy/Clones.sol": {
+			"keccak256": "0xd18408af8a91bedb3d56343eeb9b30eb852e6dea93a5e2d5c6db9ca4cb905155",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://061475b7302a732dc598907790f407417551c2b13e89daa57b3698489ef5484b",
+				"dweb:/ipfs/QmdX5qmk3VSniSErFuD4aVawQxUi2MuUbP7spPcHddPfcX"
+			]
+		},
+		"Pool.sol": {
+			"keccak256": "0x0197d89a7c166bb0c784a7c26b9ac0a8452e2b62a564d0c20c47df0711cb384a",
+			"urls": [
+				"bzz-raw://b555907b7b8ccc9d5c38dd0ea4a55bddde05c3a2f1aa1c67f6899c734cb15b36",
+				"dweb:/ipfs/QmeRAvL8tPs9i3nmj6JUZGfH1rq8WYJTrYN2NYoUDtqxhS"
+			]
+		}
+	},
+	"version": 1
+}

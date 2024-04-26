@@ -134,6 +134,7 @@ class ProjectContent extends React.Component {
       super(props);
       this.deposit = this.deposit.bind(this);
       this.withdraw = this.withdraw.bind(this);
+      this.claimMoney = this.claimMoney.bind(this);
       this.showModal = this.showModal.bind(this);
       this.state = {
           amount: "",
@@ -144,11 +145,20 @@ class ProjectContent extends React.Component {
       let transaction = await this.props.contract.deposit(this.props.id, {value: ethers.parseEther(this.state.amount)})
       transaction.wait().then(() => {
           console.log("Transaction completed");
+          this.showModal();
           this.props.reload(this.props.id);
         }
       )
   }
   async withdraw() {
+      let transaction = await this.props.contract.withdraw(this.props.id);
+      transaction.wait().then(() => {
+        console.log("Transaction completed");
+        this.props.reload(this.props.id);
+      }
+    )
+  }
+  async claimMoney() {
       //let transaction = await this.props.contract.withdraw(this.props.id, ethers.parseEther("0.0000011111"));
       let transaction = await this.props.contract.claimMoney(this.props.id);
       transaction.wait().then(() => {
@@ -168,10 +178,11 @@ class ProjectContent extends React.Component {
           progress = 0;
       }
       else {
-          progress = parseInt(this.props.content.raised / this.props.content.target) * 100;
+          progress = parseInt(this.props.content.raised) / parseInt(this.props.content.target) * 100;
       }
       let date = new Date(parseInt(this.props.content.end) * 1000);
       let date_str = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+      let date_passed = parseInt(this.props.content.end) * 1000 < Date.now();
       return (
           <>
           <Modal show={this.state.show_modal} onHide={this.showModal}>
@@ -197,6 +208,10 @@ class ProjectContent extends React.Component {
               Deadline: {date_str}
             </Modal.Body>
             <Modal.Footer>
+              <input id={"donation_" + this.props.id} value={this.state.amount} onChange={(event) => {this.setState({amount: event.target.value})}}></input>
+              <button id={"button_" + this.props.id} onClick={this.deposit}>Sponsor</button>
+              {((this.props.content.owner.toLowerCase() === this.props.content.user) && (date_passed)) ? <button onClick={this.claimMoney}>Claim money</button> : ""}
+              {((this.props.content.owner.toLowerCase() !== this.props.content.user) && (date_passed)) ? <button onClick={this.withdraw}>Claim refund</button> : ""}
               <button onClick={this.showModal}>Close</button>
             </Modal.Footer>
           </Modal>
@@ -204,27 +219,12 @@ class ProjectContent extends React.Component {
           <Card className="projectCard" id={"project_" + this.props.id} onClick={this.showModal}>
             <Card.Body>
               <Card.Title>{this.props.content.name}</Card.Title>
-              <Card.Subtitle>Owner: {this.props.content.owner}</Card.Subtitle>
+              <Card.Subtitle class="card_address">Owner: {this.props.content.owner}</Card.Subtitle>
               <Card.Text>{this.props.content.desc}</Card.Text>
             </Card.Body>
             <Card.Footer>Expire: {date_str}</Card.Footer>
           </Card>
           </>
-          //<div className="projectContent" id={"project_" + this.props.id}>
-          //    <span id="projectName">Project Name: {this.props.content.name}</span><br/>
-          //    <span id="projectOwner">Project Owner: {this.props.content.owner}</span><br/>
-          //    <span id="projectDescription">Project Description: {this.props.content.desc}</span><br/>
-          //    <span id="projectRaised">Project Raised: {ethers.formatEther(this.props.content.raised)}</span><br/>
-          //    <span id="projectTarget">Project Target: {ethers.formatEther(this.props.content.target)} ETH</span><br/>
-          //    <span id="projectEnd">Project deadline: {date_str}</span><br/>
-          //    <ProgressBar animated now={progress} label={`${progress}%`} />
-          //    <div>
-          //      <input id={"donation_" + this.props.id} value={this.state.amount} onChange={(event) => {this.setState({amount: event.target.value})}}></input>
-          //      <button id={"button_" + this.props.id} onClick={this.deposit}>Sponsor</button>
-          //      <button disabled={this.props.content.owner.toLowerCase() === this.props.content.user} onClick={this.withdraw}>Withdraw</button>
-          //      <button disabled={parseInt(this.props.content.end) * 1000 > Date.now()} onClick={console.log("Clicked")}> Claim money</button>
-          //    </div>
-          //</div>
       )
   }
 }

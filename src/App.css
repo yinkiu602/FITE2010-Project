@@ -45,3 +45,14 @@
 #proj_Name {
   margin-left: 10px;
 }
+
+.card_address {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap
+}
+
+.mainContent {
+  width: 80vw;
+  margin: 0 auto;
+}

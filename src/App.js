@@ -1,11 +1,7 @@
 import './App.css';
 import { ethers } from "ethers";
 import React from 'react';
-import ProgressBar from 'react-bootstrap/ProgressBar';
-import Modal from 'react-bootstrap/Modal';
-import Spinner from 'react-bootstrap/Spinner';
-import Card from 'react-bootstrap/Card';
-import CardGroup from 'react-bootstrap/CardGroup';
+import {ProgressBar, Modal, Spinner, Card, CardGroup} from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import published_contract from "./contracts/artifacts/Platform.json";
 
@@ -219,7 +215,7 @@ class ProjectContent extends React.Component {
           <Card className="projectCard" id={"project_" + this.props.id} onClick={this.showModal}>
             <Card.Body>
               <Card.Title>{this.props.content.name}</Card.Title>
-              <Card.Subtitle class="card_address">Owner: {this.props.content.owner}</Card.Subtitle>
+              <Card.Subtitle className="card_address">Owner: {this.props.content.owner}</Card.Subtitle>
               <Card.Text>{this.props.content.desc}</Card.Text>
             </Card.Body>
             <Card.Footer>Expire: {date_str}</Card.Footer>
@@ -235,6 +231,9 @@ class TopNavigation extends React.Component {
         console.log(props)
         this.login_logout = this.login_logout.bind(this);
         this.walletInteraction = this.walletInteraction.bind(this);
+        this.state = {
+            account: "",
+        }
     }
 
     async walletInteraction() {
@@ -254,6 +253,7 @@ class TopNavigation extends React.Component {
               const provider = new ethers.BrowserProvider(window.ethereum);
               const signer = await provider.getSigner();
               const contract = new ethers.Contract(contractAddr, published_contract.abi, signer);
+              this.setState({account: account});
               this.props.setConnectionState(account, true, contract);
           }
         }
@@ -265,7 +265,7 @@ class TopNavigation extends React.Component {
 
     login_logout() {
         if (this.props.connected) {
-            return (<button id="connect_wallet" onClick={this.walletInteraction}>Disconnect</button>)
+            return (<><button id="connect_wallet" onClick={this.walletInteraction}>Disconnect</button><button id="wallet_addr">{this.state.account}</button></>)
         }
         else{
             return (<button id="connect_wallet" onClick={this.walletInteraction}>Connect to Wallet</button>)
@@ -406,9 +406,8 @@ class App extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className="mainClass">
                 <TopNavigation connected={this.state.connected} setConnectionState={this.setConnectionState}/>
-                <p>{this.state.account}</p>
                 {this.state.account ? <MainContent contract={this.state.contract} user={this.state.account}/> : ""}
             </div>
         )

@@ -46,6 +46,15 @@
   margin-left: 10px;
 }
 
+#wallet_addr {
+  width: 10vw;
+  float: right;
+  margin-right: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap
+}
+
 .card_address {
   text-overflow: ellipsis;
   overflow: hidden;
@@ -54,5 +63,10 @@
 
 .mainContent {
   width: 80vw;
-  margin: 0 auto;
+  margin: 10vh auto;
+}
+
+.mainClass {
+  width: 85vw;
+  margin: 2vh auto;
 }

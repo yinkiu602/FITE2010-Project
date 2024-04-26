@@ -2,6 +2,7 @@ import './App.css';
 import { ethers } from "ethers";
 import React from 'react';
 import {ProgressBar, Modal, Spinner, Card, CardGroup} from 'react-bootstrap';
+import {Backdrop, CircularProgress} from '@mui/material/';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import published_contract from "./contracts/artifacts/Platform.json";
 
@@ -374,11 +375,17 @@ class MainContent extends React.Component {
         }
         return (
             <div className="mainContent">
-                <span id="main_banner">{this.state.finish_load ? "All projects are listed below." : "Please wait while projects are being retrieved."}</span>
-                <button onClick={this.showModal}>Create Project</button>
+                <div id="status_text">
+                  <span id="main_banner">{this.state.finish_load ? "All projects are listed below." : "Please wait while projects are being retrieved."}</span>
+                  <button onClick={this.showModal}>Create Project</button>
+                </div>
                 <ProjectWriter show_modal={this.state.show_modal} showModal={this.showModal} contract={this.props.contract} getProjects={this.getProjects}/>
                 {
-                    this.state.finish_load ? grouped_projects.map((group) => {return <CardGroup>{group.map((element) => {return element;})}</CardGroup>}) : <Spinner animation="border" role="status"/>
+                    this.state.finish_load ? grouped_projects.map((group) => {return <CardGroup>{group.map((element) => {return element;})}</CardGroup>}) : 
+                    <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
+                      <CircularProgress color="inherit" />
+                    </Backdrop>
+                    //<Spinner animation="border" role="status"/>
                 }
             </div>
         )

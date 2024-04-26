@@ -5,6 +5,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
 import Card from 'react-bootstrap/Card';
+import CardGroup from 'react-bootstrap/CardGroup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import published_contract from "./contracts/artifacts/Platform.json";
 
@@ -93,32 +94,31 @@ class ProjectWriter extends React.Component {
         console.log(owner, id)
         console.log(transaction)
         console.log("Transaction completed");
-        this.setState({project_init: true});
+        this.setState({project_init: true, modal_name: "", modal_deadline: ""});
       })
     }
     catch (err) {
       console.log(err);
       this.setState({waiting: false});
+      this.setState({modal_name: "", modal_deadline: ""});
     }
   }
 
   async initProject() {
     this.setState({waiting: true});
     try {
-      let transaction = await this.props.contract.setProjectDescription(this.state.project_id, this.state.modal_desc);
-      await transaction.wait();
+      let transaction = this.props.contract.setProjectDescription(this.state.project_id, this.state.modal_desc);
       transaction = await this.props.contract.setTarget(this.state.project_id, ethers.parseEther(this.state.modal_target));
       await transaction.wait();
       this.setState({waiting: false});
       this.props.getProjects();
       this.props.showModal();
-      this.setState({project_init: false});
     }
     catch (err) {
       console.log(err);
       this.setState({waiting: false});
-      this.setState({project_init: false});
     }
+    this.setState({modal_desc: "", modal_target: "", project_init: false});
   }
 
 
@@ -368,13 +368,17 @@ class MainContent extends React.Component {
     }
 
     render() {
+        let grouped_projects = [];
+        for (let i = 0; i < this.state.projects.length; i+=3) {
+            grouped_projects.push(this.state.projects.slice(i, i+3));
+        }
         return (
             <div className="mainContent">
                 <span id="main_banner">{this.state.finish_load ? "All projects are listed below." : "Please wait while projects are being retrieved."}</span>
                 <button onClick={this.showModal}>Create Project</button>
                 <ProjectWriter show_modal={this.state.show_modal} showModal={this.showModal} contract={this.props.contract} getProjects={this.getProjects}/>
                 {
-                    this.state.finish_load ? this.state.projects.map((project) => {return project;}) : <Spinner animation="border" role="status"/>
+                    this.state.finish_load ? grouped_projects.map((group) => {return <CardGroup>{group.map((element) => {return element;})}</CardGroup>}) : <Spinner animation="border" role="status"/>
                 }
             </div>
         )

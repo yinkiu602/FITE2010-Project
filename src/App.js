@@ -4,6 +4,7 @@ import React from 'react';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Modal from 'react-bootstrap/Modal';
 import Spinner from 'react-bootstrap/Spinner';
+import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import published_contract from "./contracts/artifacts/Platform.json";
 
@@ -133,8 +134,10 @@ class ProjectContent extends React.Component {
       super(props);
       this.deposit = this.deposit.bind(this);
       this.withdraw = this.withdraw.bind(this);
+      this.showModal = this.showModal.bind(this);
       this.state = {
           amount: "",
+          show_modal: false,
       }
   }
   async deposit() {
@@ -154,6 +157,9 @@ class ProjectContent extends React.Component {
       }
     )
   }
+  showModal() {
+    this.setState({show_modal: !this.state.show_modal});
+  }
 
   render() {
       let progress;
@@ -167,21 +173,58 @@ class ProjectContent extends React.Component {
       let date = new Date(parseInt(this.props.content.end) * 1000);
       let date_str = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
       return (
-          <div className="projectContent" id={"project_" + this.props.id}>
-              <span id="projectName">Project Name: {this.props.content.name}</span><br/>
-              <span id="projectOwner">Project Owner: {this.props.content.owner}</span><br/>
-              <span id="projectDescription">Project Description: {this.props.content.desc}</span><br/>
-              <span id="projectRaised">Project Raised: {ethers.formatEther(this.props.content.raised)}</span><br/>
-              <span id="projectTarget">Project Target: {ethers.formatEther(this.props.content.target)} ETH</span><br/>
-              <span id="projectEnd">Project deadline: {date_str}</span><br/>
+          <>
+          <Modal show={this.state.show_modal} onHide={this.showModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>{this.props.content.name}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Owner: {this.props.content.owner}
+            </Modal.Body>
+            <Modal.Body>
+              Description: {this.props.content.desc}
+            </Modal.Body>
+            <Modal.Body>
+              Raised: {ethers.formatEther(this.props.content.raised)}
+            </Modal.Body>
+            <Modal.Body>
+              Target: {ethers.formatEther(this.props.content.target)}
+            </Modal.Body>
+            <Modal.Body>
               <ProgressBar animated now={progress} label={`${progress}%`} />
-              <div>
-                <input id={"donation_" + this.props.id} value={this.state.amount} onChange={(event) => {this.setState({amount: event.target.value})}}></input>
-                <button id={"button_" + this.props.id} onClick={this.deposit}>Sponsor</button>
-                <button disabled={this.props.content.owner.toLowerCase() === this.props.content.user} onClick={this.withdraw}>Withdraw</button>
-                <button disabled={parseInt(this.props.content.end) * 1000 > Date.now()} onClick={console.log("Clicked")}> Claim money</button>
-              </div>
-          </div>
+            </Modal.Body>
+            <Modal.Body>
+              Deadline: {date_str}
+            </Modal.Body>
+            <Modal.Footer>
+              <button onClick={this.showModal}>Close</button>
+            </Modal.Footer>
+          </Modal>
+  
+          <Card className="projectCard" id={"project_" + this.props.id} onClick={this.showModal}>
+            <Card.Body>
+              <Card.Title>{this.props.content.name}</Card.Title>
+              <Card.Subtitle>Owner: {this.props.content.owner}</Card.Subtitle>
+              <Card.Text>{this.props.content.desc}</Card.Text>
+            </Card.Body>
+            <Card.Footer>Expire: {date_str}</Card.Footer>
+          </Card>
+          </>
+          //<div className="projectContent" id={"project_" + this.props.id}>
+          //    <span id="projectName">Project Name: {this.props.content.name}</span><br/>
+          //    <span id="projectOwner">Project Owner: {this.props.content.owner}</span><br/>
+          //    <span id="projectDescription">Project Description: {this.props.content.desc}</span><br/>
+          //    <span id="projectRaised">Project Raised: {ethers.formatEther(this.props.content.raised)}</span><br/>
+          //    <span id="projectTarget">Project Target: {ethers.formatEther(this.props.content.target)} ETH</span><br/>
+          //    <span id="projectEnd">Project deadline: {date_str}</span><br/>
+          //    <ProgressBar animated now={progress} label={`${progress}%`} />
+          //    <div>
+          //      <input id={"donation_" + this.props.id} value={this.state.amount} onChange={(event) => {this.setState({amount: event.target.value})}}></input>
+          //      <button id={"button_" + this.props.id} onClick={this.deposit}>Sponsor</button>
+          //      <button disabled={this.props.content.owner.toLowerCase() === this.props.content.user} onClick={this.withdraw}>Withdraw</button>
+          //      <button disabled={parseInt(this.props.content.end) * 1000 > Date.now()} onClick={console.log("Clicked")}> Claim money</button>
+          //    </div>
+          //</div>
       )
   }
 }

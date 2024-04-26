@@ -55,6 +55,10 @@
   white-space: nowrap
 }
 
+#create_button {
+  text-align: right;
+}
+
 .card_address {
   text-overflow: ellipsis;
   overflow: hidden;

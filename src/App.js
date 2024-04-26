@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { ethers } from "ethers";
 import React from 'react';
@@ -11,10 +10,6 @@ import published_contract from "./contracts/artifacts/Platform.json";
 const contractAddr = "0xc33Dd8f9cF700D7bE765DFbe042535d6eEdb6642";
 
 class LoadingButton extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <button disabled={this.props.loading} onClick={this.props.onClick}>
@@ -162,6 +157,7 @@ class ProjectContent extends React.Component {
 
   render() {
       let progress;
+      // eslint-disable-next-line
       if (this.props.content.target == 0 || this.props.content.raised == 0) {
           progress = 0;
       }
@@ -182,7 +178,7 @@ class ProjectContent extends React.Component {
               <div>
                 <input id={"donation_" + this.props.id} value={this.state.amount} onChange={(event) => {this.setState({amount: event.target.value})}}></input>
                 <button id={"button_" + this.props.id} onClick={this.deposit}>Sponsor</button>
-                <button disabled={this.props.content.owner.toLowerCase() == this.props.content.user} onClick={this.withdraw}>Withdraw</button>
+                <button disabled={this.props.content.owner.toLowerCase() === this.props.content.user} onClick={this.withdraw}>Withdraw</button>
                 <button disabled={parseInt(this.props.content.end) * 1000 > Date.now()} onClick={console.log("Clicked")}> Claim money</button>
               </div>
           </div>
@@ -270,6 +266,7 @@ class MainContent extends React.Component {
       this.setState({projects: []});
     }
     componentDidUpdate(old_state, new_state) {
+        // eslint-disable-next-line
         if (old_state.contract == this.props.contract)  {return;}
         console.log(old_state)
         console.log(new_state)

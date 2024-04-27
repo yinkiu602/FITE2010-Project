@@ -430,6 +430,9 @@ class App extends React.Component {
             <div className="mainClass">
                 <TopNavigation connected={this.state.connected} setConnectionState={this.setConnectionState}/>
                 {this.state.account ? <MainContent contract={this.state.contract} user={this.state.account}/> : ""}
+                <div className="wave"></div>
+                <div className="wave"></div>
+                <div className="wave"></div>
             </div>
         )
     }

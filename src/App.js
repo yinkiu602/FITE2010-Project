@@ -11,7 +11,7 @@ const contractAddr = "0xc33Dd8f9cF700D7bE765DFbe042535d6eEdb6642";
 class LoadingButton extends React.Component {
     render() {
         return (
-            <Button variant="secondary" disabled={this.props.loading} onClick={this.props.onClick}>
+            <Button variant="secondary" disabled={this.props.loading || this.props.disabled} onClick={this.props.onClick}>
                 {this.props.display_text} {' '}
                 {this.props.loading ? <Spinner as="span" animation="grow" variant="primary" size="sm" role="status" aria-hidden="true"/> : ""}
             </Button>
@@ -137,6 +137,8 @@ class ProjectContent extends React.Component {
           amount: "",
           show_modal: false,
           waiting: false,
+          claim_waiting: false,
+          withdraw_waiting: false,
       }
   }
   async deposit() {
@@ -157,25 +159,35 @@ class ProjectContent extends React.Component {
       }
   }
   async withdraw() {
+      this.setState({withdraw_waiting: true});
       try {
         let transaction = await this.props.contract.withdraw(this.props.id);
         transaction.wait().then(() => {
           console.log("Transaction completed");
           this.props.reload(this.props.id);
+          this.setState({withdraw_waiting: false, amount: ""});
         })
       }
       catch (err) {
         console.log(err);
+        this.setState({withdraw_waiting: false, amount: ""});
       }
   }
   async claimMoney() {
       //let transaction = await this.props.contract.withdraw(this.props.id, ethers.parseEther("0.0000011111"));
-      let transaction = await this.props.contract.claimMoney(this.props.id);
-      transaction.wait().then(() => {
-        console.log("Transaction completed");
-        this.props.reload(this.props.id);
+      this.setState({claim_waiting: true});
+      try {
+        let transaction = await this.props.contract.claimMoney(this.props.id);
+        transaction.wait().then(() => {
+          console.log("Transaction completed");
+          this.props.reload(this.props.id);
+          this.setState({claim_waiting: false, amount: ""});
+        })
       }
-    )
+      catch (err) {
+        console.log(err);
+        this.setState({claim_waiting: false, amount: ""});
+      }
   }
   showModal() {
     this.setState({show_modal: !this.state.show_modal});
@@ -183,16 +195,29 @@ class ProjectContent extends React.Component {
 
   render() {
       let progress;
+      let bar_state;
       // eslint-disable-next-line
       if (this.props.content.target == 0 || this.props.content.raised == 0) {
           progress = 0;
       }
       else {
           progress = parseInt(this.props.content.raised) / parseInt(this.props.content.target) * 100;
+
       }
       let date = new Date(parseInt(this.props.content.end) * 1000);
       let date_str = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
       let date_passed = parseInt(this.props.content.end) * 1000 < Date.now();
+      if (progress >= 100) {
+          bar_state = "success";
+      }
+      else {
+        if (date_passed) {
+          bar_state = "danger";
+        }
+        else {
+          bar_state = "info";
+        }
+      }
       return (
           <>
           <Modal show={this.state.show_modal} onHide={this.showModal}>
@@ -212,16 +237,17 @@ class ProjectContent extends React.Component {
               Target: {ethers.formatEther(this.props.content.target)}
             </Modal.Body>
             <Modal.Body>
-              <ProgressBar animated now={progress} label={`${progress}%`} />
+              <ProgressBar animated variant={bar_state} now={progress} label={`${progress}%`} />
             </Modal.Body>
             <Modal.Body>
               Deadline: {date_str}
             </Modal.Body>
             <Modal.Footer>
               <input id={"donation_" + this.props.id} value={this.state.amount} onChange={(event) => {this.setState({amount: event.target.value})}}></input>
-              <LoadingButton id={"button_" + this.props.id} display_text="Sponsor" loading={this.state.waiting} onClick={this.deposit}/>
-              {((this.props.content.owner.toLowerCase() === this.props.content.user) && (date_passed)) ? <button onClick={this.claimMoney}>Claim money</button> : ""}
-              {((this.props.content.owner.toLowerCase() !== this.props.content.user) && (date_passed)) ? <button onClick={this.withdraw}>Claim refund</button> : ""}
+              <LoadingButton id={"button_" + this.props.id} display_text="Sponsor" loading={this.state.waiting} disabled={bar_state === "danger"} onClick={this.deposit}/>
+              {((this.props.content.owner.toLowerCase() === this.props.content.user) && (date_passed) && (parseInt(this.props.content.raised) >= parseInt(this.props.content.target))) ? <LoadingButton display_text="Claim money" loading={this.state.claim_waiting} onClick={this.claimMoney}/> : ""}
+              
+              {((this.props.content.owner.toLowerCase() !== this.props.content.user) && (date_passed) && (parseInt(this.props.content.raised) < parseInt(this.props.content.target))) ? <LoadingButton display_text="Claim refund" loading={this.state.withdraw_waiting} onClick={this.withdraw}/> : ""}
               <Button variant="secondary" onClick={this.showModal}>Close</Button>
             </Modal.Footer>
           </Modal>
@@ -231,7 +257,7 @@ class ProjectContent extends React.Component {
               <Card.Title className="card_content">{this.props.content.name}</Card.Title>
               <Card.Subtitle className="card_content">Owner: {this.props.content.owner}</Card.Subtitle>
               <Card.Text className="card_content">{this.props.content.desc}</Card.Text>
-              <ProgressBar striped variant="info" now={progress} />
+              <ProgressBar striped variant={bar_state} now={progress} />
             </Card.Body>
             <Card.Footer>Expire: {date_str}</Card.Footer>
           </Card>
@@ -392,6 +418,7 @@ class MainContent extends React.Component {
                 <div id="create_button">
                   {this.state.finish_load ? <Button variant="primary" onClick={this.showModal}>Create Project</Button> : ""}
                 </div>
+                <br/>
                 <ProjectWriter show_modal={this.state.show_modal} showModal={this.showModal} contract={this.props.contract} getProjects={this.getProjects}/>
                 {
                     this.state.finish_load ? grouped_projects.map((group) => {return <CardGroup>{group.map((element) => {return element;})}</CardGroup>}) : 

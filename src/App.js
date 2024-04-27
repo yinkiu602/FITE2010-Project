@@ -228,9 +228,9 @@ class ProjectContent extends React.Component {
   
           <Card className="projectCard" id={"project_" + this.props.id} onClick={this.showModal}>
             <Card.Body>
-              <Card.Title>{this.props.content.name}</Card.Title>
-              <Card.Subtitle className="card_address">Owner: {this.props.content.owner}</Card.Subtitle>
-              <Card.Text>{this.props.content.desc}</Card.Text>
+              <Card.Title className="card_content">{this.props.content.name}</Card.Title>
+              <Card.Subtitle className="card_content">Owner: {this.props.content.owner}</Card.Subtitle>
+              <Card.Text className="card_content">{this.props.content.desc}</Card.Text>
               <ProgressBar striped variant="info" now={progress} />
             </Card.Body>
             <Card.Footer>Expire: {date_str}</Card.Footer>

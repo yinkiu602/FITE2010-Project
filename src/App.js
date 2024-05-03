@@ -19,6 +19,7 @@ class LoadingButton extends React.Component {
     }
 }
 
+
 class ProjectWriter extends React.Component {
   constructor(props) {
     super(props);
@@ -51,12 +52,21 @@ class ProjectWriter extends React.Component {
           When will be the deadline for the project?
           <input id="modal_deadline" placeholder="No. of days (1,2,3...)" value={this.state.modal_deadline} onChange={(event) => {this.setState({modal_deadline: event.target.value})}} onBeforeInput={(e)=> {if (!/[0-9]/.test(e.data)) {e.preventDefault();}}}/>
         </Modal.Body>
+	<Modal.Body>
+	    Please choose an image for your project.
+	    <br></br>
+	    <button type="button" onClick={this.upload}> Upload </button>
+	</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.showModal}>Close</Button>
           <LoadingButton display_text="Create" loading={this.state.waiting} onClick={this.createProject}/>
         </Modal.Footer>
       </Modal>
     )
+  }
+
+  upload(){
+    console.log("testing");
   }
 
   project_init() {

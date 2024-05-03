@@ -55,7 +55,7 @@ class ProjectWriter extends React.Component {
 	<Modal.Body>
 	    Please choose an image for your project.
 	    <br></br>
-	    <button type="button" onClick={this.upload}> Upload </button>
+	    <input type="file" accept=".jpeg,.png,.gif,.pdf,.bmp" onClick={this.upload}/>
 	</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.showModal}>Close</Button>

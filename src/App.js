@@ -1,10 +1,11 @@
 import './App.css';
 import { ethers } from "ethers";
-import React from 'react';
+import React, {useState} from 'react';
 import {Button, ProgressBar, Modal, Spinner, Card, CardGroup} from 'react-bootstrap';
 import {Backdrop, CircularProgress} from '@mui/material/';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import published_contract from "./contracts/artifacts/Platform.json";
+import CardMedia from "@mui/material/CardMedia";
 
 const contractAddr = "0xc33Dd8f9cF700D7bE765DFbe042535d6eEdb6642";
 
@@ -27,6 +28,7 @@ class ProjectWriter extends React.Component {
       modal_name: "",
       modal_deadline: "",
       modal_desc: "",
+      modal_image: null,
       modal_target: "",
       project_id: "",
       project_init: false,
@@ -55,7 +57,7 @@ class ProjectWriter extends React.Component {
 	<Modal.Body>
 	    Please choose an image for your project.
 	    <br></br>
-	    <input type="file" accept=".jpeg,.png,.gif,.pdf,.bmp" onClick={this.upload}/>
+	    <input type="file" accept=".jpeg,.png,.gif,.pdf,.bmp" value={this.state.modal_image} onChange={(event) => {this.setState({modal_image: event.target.file})}}/>
 	</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.showModal}>Close</Button>
@@ -63,10 +65,6 @@ class ProjectWriter extends React.Component {
         </Modal.Footer>
       </Modal>
     )
-  }
-
-  upload(){
-    console.log("testing");
   }
 
   project_init() {
@@ -265,6 +263,7 @@ class ProjectContent extends React.Component {
           <Card className="projectCard" id={"project_" + this.props.id} onClick={this.showModal}>
             <Card.Body>
               <Card.Title className="card_content">{this.props.content.name}</Card.Title>
+	      <CardMedia className="card_content" component="img" image={this.props.modal_image} alt="project image" />
               <Card.Subtitle className="card_content">Owner: {this.props.content.owner}</Card.Subtitle>
               <Card.Text className="card_content">{this.props.content.desc}</Card.Text>
               <ProgressBar striped variant={bar_state} now={progress} />
@@ -429,7 +428,7 @@ class MainContent extends React.Component {
                   {this.state.finish_load ? <Button variant="primary" onClick={this.showModal}>Create Project</Button> : ""}
                 </div>
                 <br/>
-                <ProjectWriter show_modal={this.state.show_modal} showModal={this.showModal} contract={this.props.contract} getProjects={this.getProjects}/>
+		<ProjectWriter show_modal={this.state.show_modal} showModal={this.showModal} contract={this.props.contract} getProjects={this.getProjects}/>
                 {
                     this.state.finish_load ? grouped_projects.map((group) => {return <CardGroup>{group.map((element) => {return element;})}</CardGroup>}) : 
                     <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>

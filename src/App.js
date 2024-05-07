@@ -6,6 +6,7 @@ import {Backdrop, CircularProgress} from '@mui/material/';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import published_contract from "./contracts/artifacts/Platform.json";
 import CardMedia from "@mui/material/CardMedia";
+import image from './test_image.png';
 
 const contractAddr = "0xc33Dd8f9cF700D7bE765DFbe042535d6eEdb6642";
 
@@ -57,12 +58,20 @@ class ProjectWriter extends React.Component {
 	<Modal.Body>
 	    Please choose an image for your project.
 	    <br></br>
-	    <input type="file" accept=".jpeg,.png,.gif,.pdf,.bmp" value={this.state.modal_image} onChange={(event) => {this.setState({modal_image: event.target.file})}}/>
+	    <input type="file" accept=".jpeg,.png,.gif,.pdf,.bmp" onChange={(event) => {const file = event.target.files[0]; this.setState({ modal_image: URL.createObjectURL(file) });}}/>
 	</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.showModal}>Close</Button>
           <LoadingButton display_text="Create" loading={this.state.waiting} onClick={this.createProject}/>
         </Modal.Footer>
+        {this.state.modal_image && (
+          <CardMedia
+            className="card_content"
+            component="img"
+            image={this.state.modal_image}
+            alt="project image"
+          />
+        )}
       </Modal>
     )
   }
@@ -263,7 +272,7 @@ class ProjectContent extends React.Component {
           <Card className="projectCard" id={"project_" + this.props.id} onClick={this.showModal}>
             <Card.Body>
               <Card.Title className="card_content">{this.props.content.name}</Card.Title>
-	      <CardMedia className="card_content" component="img" image={this.props.modal_image} alt="project image" />
+              <CardMedia className="card_content" component="img" image={this.props.modal_image} alt="project image" src={image}/>
               <Card.Subtitle className="card_content">Owner: {this.props.content.owner}</Card.Subtitle>
               <Card.Text className="card_content">{this.props.content.desc}</Card.Text>
               <ProgressBar striped variant={bar_state} now={progress} />

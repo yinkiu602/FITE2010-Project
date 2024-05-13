@@ -79,6 +79,12 @@
   margin: 2vh auto;
 }
 
+.card_img {
+  width: 80%;
+  height: 80%;
+  margin: auto;
+}
+
 /*body {
   background-image: url('./background.jpg');
   background-repeat: no-repeat;

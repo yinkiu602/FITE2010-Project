@@ -1,12 +1,10 @@
 import './App.css';
 import { ethers } from "ethers";
-import React, {useState} from 'react';
+import React from 'react';
 import {Button, ProgressBar, Modal, Spinner, Card, CardGroup} from 'react-bootstrap';
 import {Backdrop, CircularProgress} from '@mui/material/';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import published_contract from "./contracts/artifacts/Platform.json";
-import CardMedia from "@mui/material/CardMedia";
-import image from './test_image.png';
 
 const contractAddr = "0xc33Dd8f9cF700D7bE765DFbe042535d6eEdb6642";
 
@@ -55,23 +53,16 @@ class ProjectWriter extends React.Component {
           When will be the deadline for the project?
           <input id="modal_deadline" placeholder="No. of days (1,2,3...)" value={this.state.modal_deadline} onChange={(event) => {this.setState({modal_deadline: event.target.value})}} onBeforeInput={(e)=> {if (!/[0-9]/.test(e.data)) {e.preventDefault();}}}/>
         </Modal.Body>
-	<Modal.Body>
-	    Please choose an image for your project.
-	    <br></br>
-	    <input type="file" accept=".jpeg,.png,.gif,.pdf,.bmp" onChange={(event) => {const file = event.target.files[0]; this.setState({ modal_image: URL.createObjectURL(file) });}}/>
-	</Modal.Body>
+	      <Modal.Body>
+	          Please choose an image for your project.
+	          <br></br>
+	          <input type="file" accept=".jpeg,.png,.gif,.pdf,.bmp" onChange={(event) => {const file = event.target.files[0]; this.setState({ modal_image: URL.createObjectURL(file) });}}/>
+	      </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={this.props.showModal}>Close</Button>
           <LoadingButton display_text="Create" loading={this.state.waiting} onClick={this.createProject}/>
         </Modal.Footer>
-        {this.state.modal_image && (
-          <CardMedia
-            className="card_content"
-            component="img"
-            image={this.state.modal_image}
-            alt="project image"
-          />
-        )}
+        {this.state.modal_image && <Card.Img className="card_img" variant="bottom" src={this.state.modal_image} alt="project image"/>}
       </Modal>
     )
   }
@@ -101,15 +92,14 @@ class ProjectWriter extends React.Component {
   async createProject() {
     this.setState({waiting: true});
     try {
-      let transaction = await this.props.contract.createProject(this.state.modal_name, this.state.modal_deadline);
-      this.props.contract.on("projectCreated", (owner, id) => {
+      // Setup listener before transaction.
+      this.props.contract.once("projectCreated", (owner, id) => {
         this.setState({waiting: false});
         this.setState({project_id: parseInt(id)});
-        console.log(owner, id)
-        console.log(transaction)
         console.log("Transaction completed");
         this.setState({project_init: true, modal_name: "", modal_deadline: ""});
       })
+      await this.props.contract.createProject(this.state.modal_name, this.state.modal_deadline);
     }
     catch (err) {
       console.log(err);
@@ -270,9 +260,9 @@ class ProjectContent extends React.Component {
           </Modal>
   
           <Card className="projectCard" id={"project_" + this.props.id} onClick={this.showModal}>
+            <Card.Img className="card_img" variant="top" src="/test_image.png" alt="project image" style={{width: "70%"}}/>
             <Card.Body>
               <Card.Title className="card_content">{this.props.content.name}</Card.Title>
-              <CardMedia className="card_content" component="img" image={this.props.modal_image} alt="project image" src={image}/>
               <Card.Subtitle className="card_content">Owner: {this.props.content.owner}</Card.Subtitle>
               <Card.Text className="card_content">{this.props.content.desc}</Card.Text>
               <ProgressBar striped variant={bar_state} now={progress} />

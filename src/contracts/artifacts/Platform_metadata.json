@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.22+commit.4fc1097e"
+		"version": "0.8.25+commit.b61c2a91"
 	},
 	"language": "Solidity",
 	"output": {
@@ -9,6 +9,48 @@
 				"inputs": [],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "project_id",
+						"type": "uint256"
+					}
+				],
+				"name": "projectCreated",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_action",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_contract_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_value",
+						"type": "uint256"
+					}
+				],
+				"name": "adminFeature",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
 			},
 			{
 				"inputs": [
@@ -28,6 +70,11 @@
 					{
 						"internalType": "string",
 						"name": "projectName",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "projectImageLink",
 						"type": "string"
 					},
 					{
@@ -101,6 +148,25 @@
 					}
 				],
 				"name": "getProjectDescription",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "project_id",
+						"type": "uint256"
+					}
+				],
+				"name": "getProjectImageLink",
 				"outputs": [
 					{
 						"internalType": "string",
@@ -214,6 +280,24 @@
 					},
 					{
 						"internalType": "string",
+						"name": "link",
+						"type": "string"
+					}
+				],
+				"name": "setProjectImageLink",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "project_id",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
 						"name": "name",
 						"type": "string"
 					}
@@ -242,28 +326,10 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "test",
-				"outputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "uint256",
 						"name": "project_id",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "amount",
 						"type": "uint256"
 					}
 				],
@@ -288,7 +354,7 @@
 		"compilationTarget": {
 			"src/contracts/Platform.sol": "Platform"
 		},
-		"evmVersion": "shanghai",
+		"evmVersion": "cancun",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -301,10 +367,10 @@
 	},
 	"sources": {
 		"src/contracts/Platform.sol": {
-			"keccak256": "0x7133682a273b02849c8491f71d858570832462b5086cf517c8c2e27da80332ed",
+			"keccak256": "0xe044a5f6a0b29a8cb2e1d865ba4bf0409427377b089f09ba79be2e7e66fcfd69",
 			"urls": [
-				"bzz-raw://0782bb85bcc9cfb1cbaa8afb0c9ba6af4380b426c974ef5305b9e840cd7c2035",
-				"dweb:/ipfs/QmRysf1sW3wRe1jx2QbHjDG8rFMKjqRCy66dbKaEx7DjZ4"
+				"bzz-raw://8166ce10638eabbdaf4cfaed6f4bb670d2ad7cb210c368833c69525400754944",
+				"dweb:/ipfs/QmNeagxEsT2Ckg52Art7or4SH4NJK4CEjsTfH6copAWENL"
 			]
 		}
 	},

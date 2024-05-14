@@ -9,6 +9,7 @@ contract Platform{
         address owner;
         string projectName;
         string projectDescription;
+        string projectImageLink;
         uint256 target; //Not yet set target
         uint256 raised;
         uint256 releaseTime; // In unix timestamp
@@ -34,14 +35,11 @@ contract Platform{
         }
     }
 
-    function test() external view returns (address){
-        return contract_creator;
-    }
-
-    function createProject(string memory projectName, uint256 no_of_date) external returns (uint256){
+    function createProject(string memory projectName, string memory projectImageLink,uint256 no_of_date) external returns (uint256){
         Project storage newProject = projects[contract_id];
         newProject.owner = msg.sender;
         newProject.projectName = projectName;
+        newProject.projectImageLink = projectImageLink;
         newProject.releaseTime = block.timestamp + no_of_date * 86400;
         contract_id += 1;
         emit projectCreated(msg.sender, contract_id-1);
@@ -59,6 +57,12 @@ contract Platform{
         require (projects[project_id].owner != address(0), "Project does not exist");
         require (msg.sender == projects[project_id].owner, "Only the owner can set the project description"); 
         projects[project_id].projectDescription = description;
+    }
+
+    function setProjectImageLink(uint256 project_id, string memory link) public {
+        require (projects[project_id].owner != address(0), "Project does not exist");
+        require (msg.sender == projects[project_id].owner, "Only the owner can set the project image"); 
+        projects[project_id].projectImageLink = link;
     }
 
     function setTarget(uint256 project_id, uint256 _target) external {
@@ -91,6 +95,11 @@ contract Platform{
     function getProjectDescription(uint256 project_id) public view returns (string memory) {
         require (projects[project_id].owner != address(0), "Project does not exist");
         return projects[project_id].projectDescription;
+    }
+
+    function getProjectImageLink(uint256 project_id) public view returns (string memory) {
+        require (projects[project_id].owner != address(0), "Project does not exist");
+        return projects[project_id].projectImageLink;
     }
 
     function getTarget(uint256 project_id) external view returns (uint256) {
